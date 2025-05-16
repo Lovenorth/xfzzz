@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .node { cursor: pointer; }
+    .link { fill: none; stroke: #999; stroke-width: 1.5px; }
+  </style>
+</head>
+<body>
+  <script>
+    const data = {
+      name: "中心主题",
+      children: [
+        { name: "分支1", style: "stroke: #007bff" },
+        { name: "分支2", children: [{ name: "子节点1" }, { name: "子节点2" }, { name: "子节点3" }], style: "stroke: #87ceeb" },
+        { name: "分支3", children: [{ name: "子节点1" }, { name: "子节点2" }, { name: "子节点3" }], style: "stroke: #800080" },
+        { name: "分支4", children: [{ name: "子节点1" }, { name: "子节点2" }, { name: "子节点3" }], style: "stroke: #800080" }
+      ]
+    };
+
+    const width = 800, height = 600;
+    const svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    // 布局计算
+    const root = d3.hierarchy(data);
+    const treeLayout = d3.tree().size([width, height - 100]);
+    treeLayout(root);
+
+    // 绘制连接线
+    svg.selectAll(".link")
+      .data(root.links())
+      .enter().append("path")
+      .attr("class", "link")
+      .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+
+    // 绘制节点
+    svg.selectAll(".node")
+      .data(root.descendants())
+      .enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 6)
+      .attr("cx", d => d.y)
+      .attr("cy", d => d.x)
+      .style("fill", "#00ff00");
+  </script>
+</body>
+</html>
